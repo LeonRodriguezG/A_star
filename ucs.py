@@ -13,27 +13,27 @@ class Node:
         self.cost   = cost
 
 def Compare(S1,S2):
+    f = True
     for x in range(0, LenStack):
-        if(len(S2[x]) == None):
-            if not (len(S1[x]) == None):
-                return False
-            else: 
-                return True
-        if(len(S1[x]) == None):
-            return False
-        if S2[x][0] != 'X':
-            if S2[x] != S1[x]:
-                return False
-    return True
+        try:
+            if S2[x][0] != "X":
+                if S2[x]!=S1[x]:
+                    f=False
+        except: 
+            if S2[x] != "X":
+                if S2[x]!=S1[x]:
+                    f=False
+    return f
 
 def states_recursion(actual):
   if(actual.father != None):
-    print(actual.action)
+    temp.append(actual.action)
     states_recursion(actual.father)
 
 q = Q.PriorityQueue()
 
 DefCost = 1
+temp = []
 
 Max = input()
 
@@ -59,14 +59,17 @@ PoppedNode = Node((0,0),IniS,0)
 
 for x in range(0, LenStack):
     if(not(len(IniS[x]) <= int(Max))):
-        exit("No solution found")
+        print("No solution found")
+        exit()
     if(not(len(GS[x]) <= int(Max))):
-        exit("No solution found")
+        print("No solution found")
+        exit()
 
 for x in range(0, LenStack): 
     for y in range(0, len(IniS[x])):
         if(IniS[x][y] == ''):
             del(IniS[x][len(IniS[x]) - 1])
+    for y in range(0, len(GS[x])):
         if(GS[x][y] == ''):
             del(GS[x][len(GS[x]) - 1])
 
@@ -92,6 +95,8 @@ while (not Compare(PoppedNode.state, GS)) and (not q.empty()):
 if Compare(PoppedNode.state,GS):
     print(PoppedNode.cost)
     states_recursion(PoppedNode)
-    print("Nice")
-else:
-    print("No se encontro")
+    text = ""
+    for x in range(0, len(temp)):
+            text += str(temp.pop()) + "; "
+    text = text[:-2]
+    print(text)

@@ -7,11 +7,12 @@ except ImportError:
     import queue as Q
 
 class Node:
-    def __init__ (self,action,state,cost):
+    def __init__ (self,action,state,cost,heuristic):
         self.father = None
         self.action = action
         self.state  = state
         self.cost   = cost
+        self.heu = heuristic
 
 def Compare(S1,S2):
     f = True
@@ -20,7 +21,7 @@ def Compare(S1,S2):
             if S2[x][0] != "X":
                 if S2[x]!=S1[x]:
                     f=False
-        except: 
+        except:
             if S2[x] != "X":
                 if S2[x]!=S1[x]:
                     f=False
@@ -30,27 +31,6 @@ def states_recursion(actual):
   if(actual.father != None):
     temp.append(actual.action)
     states_recursion(actual.father)
-
-def h(State):
-    AuxMat=deepcopy(State)
-    for x in range(0,LenStack):
-        MaxInStack=len(AuxMat[x])
-        for y in range(MaxInStack,int(Max)):
-            AuxMat[x].append(0)
-    AuxGS=deepcopy(GS)
-    for x in range(0,LenStack):
-        MaxInStack=len(AuxGS[x])
-        for y in range(MaxInStack,int(Max)):
-            AuxGS[x].append(0)
-    heuristic=0
-    for x in range(0,LenStack):
-        for y in range(0,int(Max)):
-            if AuxMat[x][y] != AuxGS[x][y]:
-                if AuxMat[x][y] != 0:
-                    if AuxGS[x][0]!='X':
-                        #print("X=" + str(x) + " Y=" + str(y) + " H=" + str(heuristic))
-                        heuristic+=1
-    return heuristic
 
 q = Q.PriorityQueue()
 
@@ -72,7 +52,7 @@ for x in range(0, len(GS)):
     GS[x] = GS[x].replace("(","").replace(")","")
     GS[x] = GS[x].split(',')
 
-for x in range(0, LenStack): 
+for x in range(0, LenStack):
     for y in range(0, len(IniS[x])):
         if(IniS[x][y] == ''):
             del(IniS[x][len(IniS[x]) - 1])
@@ -80,10 +60,12 @@ for x in range(0, LenStack):
         if(GS[x][y] == ''):
             del(GS[x][len(GS[x]) - 1])
 
-IniNode = Node((0,0),IniS,h(IniS))
+random = randrange(10)
+
+IniNode = Node((0,0),IniS,0,random)
 Tie = 0
-q.put((IniNode.cost,Tie,IniNode))
-PoppedNode = Node((0,0),IniS,h(IniS))
+q.put((IniNode.cost+random,Tie,IniNode))
+PoppedNode = deepcopy(IniNode)
 
 #We assume that the # of containers is the same in both the initial state and the goal state
 
@@ -106,13 +88,13 @@ while (not Compare(PoppedNode.state, GS)) and (not q.empty()):
                     if x != y and len(Stack[y]) < int(Max):
                         NewState = deepcopy(Stack)
                         Tie += 1
-                        ran = randrange(4)
+                        ran = randrange(10)
                         NewState[y].append(Stack[x][len(Stack[x]) - 1])
                         del(NewState[x][len(NewState[x]) - 1])
-                        NewCost=abs(x - y) + DefCost + PoppedNode.cost + h(NewState) - h(PoppedNode.state) + ran
-                        AuxNode=Node((x,y),NewState,NewCost)
+                        NewCost=abs(x - y) + DefCost + PoppedNode.cost
+                        AuxNode=Node((x,y),NewState,NewCost,ran)
                         AuxNode.father = PoppedNode
-                        q.put((NewCost,Tie,AuxNode))
+                        q.put((NewCost+ran,Tie,AuxNode))
         PoppedNode = q.get()[2]
 
 if Compare(PoppedNode.state,GS):

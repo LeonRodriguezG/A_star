@@ -19,7 +19,7 @@ def Compare(S1,S2):
             if S2[x][0] != "X":
                 if S2[x]!=S1[x]:
                     f=False
-        except: 
+        except:
             if S2[x] != "X":
                 if S2[x]!=S1[x]:
                     f=False
@@ -71,7 +71,7 @@ for x in range(0, len(GS)):
     GS[x] = GS[x].replace("(","").replace(")","")
     GS[x] = GS[x].split(',')
 
-for x in range(0, LenStack): 
+for x in range(0, LenStack):
     for y in range(0, len(IniS[x])):
         if(IniS[x][y] == ''):
             del(IniS[x][len(IniS[x]) - 1])
@@ -83,6 +83,7 @@ IniNode = Node((0,0),IniS,h(IniS))
 Tie = 0
 q.put((IniNode.cost,Tie,IniNode))
 PoppedNode = Node((0,0),IniS,h(IniS))
+Visited.append(IniS)
 
 #We assume that the # of containers is the same in both the initial state and the goal state
 
@@ -93,6 +94,7 @@ for x in range(0, LenStack):
     if(not(len(GS[x]) <= int(Max))):
         print("No solution found")
         exit()
+
 
 while (not Compare(PoppedNode.state, GS)) and (not q.empty()):
     if (Tie == 0):
@@ -107,10 +109,17 @@ while (not Compare(PoppedNode.state, GS)) and (not q.empty()):
                         Tie += 1
                         NewState[y].append(Stack[x][len(Stack[x]) - 1])
                         del(NewState[x][len(NewState[x]) - 1])
-                        NewCost=abs(x - y) + DefCost + PoppedNode.cost + h(NewState) - h(PoppedNode.state)
-                        AuxNode=Node((x,y),NewState,NewCost)
-                        AuxNode.father = PoppedNode
-                        q.put((NewCost,Tie,AuxNode))
+
+                        AlVisited=False
+                        for Vis in Visited:
+                            if(NewState==Vis):
+                                AlVisited=True
+                        if not AlVisited:
+                            NewCost=abs(x - y) + DefCost + PoppedNode.cost + h(NewState) - h(PoppedNode.state)
+                            AuxNode=Node((x,y),NewState,NewCost)
+                            AuxNode.father = PoppedNode
+                            q.put((NewCost,Tie,AuxNode))
+                            Visited.append(NewState)
         PoppedNode = q.get()[2]
 
 if Compare(PoppedNode.state,GS):

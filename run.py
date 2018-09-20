@@ -83,6 +83,7 @@ IniNode = Node((0,0),IniS,h(IniS))
 Tie = 0
 q.put((IniNode.cost,Tie,IniNode))
 PoppedNode = Node((0,0),IniS,h(IniS))
+Visited = []
 Visited.append(IniS)
 
 #We assume that the # of containers is the same in both the initial state and the goal state

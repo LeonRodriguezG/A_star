@@ -54,6 +54,8 @@ IniNode = Node((0,0),IniS,0)
 Tie = 0
 q.put((IniNode.cost,Tie,IniNode))
 PoppedNode = Node((0,0),IniS,0)
+Visited = []
+Visited.append(IniS)
 
 #We assume that the # of containers is the same in both the initial state and the goal state
 
@@ -86,10 +88,17 @@ while (not Compare(PoppedNode.state, GS)) and (not q.empty()):
                         Tie += 1
                         NewState[y].append(Stack[x][len(Stack[x]) - 1])
                         del(NewState[x][len(NewState[x]) - 1])
-                        NewCost=abs(x - y) + DefCost + PoppedNode.cost
-                        AuxNode=Node((x,y),NewState,NewCost)
-                        AuxNode.father = PoppedNode
-                        q.put((NewCost,Tie,AuxNode))
+
+                        AlVisited=False
+                        for Vis in Visited:
+                            if(NewState==Vis):
+                                AlVisited=True
+                        if not AlVisited:
+                            NewCost=abs(x - y) + DefCost + PoppedNode.cost
+                            AuxNode=Node((x,y),NewState,NewCost)
+                            AuxNode.father = PoppedNode
+                            q.put((NewCost,Tie,AuxNode))
+                            Visited.append(NewState)
         PoppedNode = q.get()[2]
 
 if Compare(PoppedNode.state,GS):

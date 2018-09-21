@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 program.py
+python3 run.py
